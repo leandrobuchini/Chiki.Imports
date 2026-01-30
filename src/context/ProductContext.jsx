@@ -5,19 +5,19 @@ const ProductContext = createContext();
 const initialProducts = [
     {
         id: 1,
-        name: "Camiseta Sorpresa",
+        name: "Argentina Local 2026 + Parche + Messi 10",
         price: 60000,
         discount: 0,
         category: "Camisetas",
-        image: "https://images.pexels.com/photos/17160679/pexels-photo-17160679.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        image: "/images/products/ec62b6d4.jpg"
     },
     {
         id: 2,
-        name: "Short Sorpresa",
-        price: 55000,
+        name: "Argentina Edicion Aniversario",
+        price: 50000,
         discount: 0,
-        category: "Shorts",
-        image: "https://images.pexels.com/photos/6077792/pexels-photo-6077792.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+        category: "Camisetas",
+        image: "/images/products/ebef86d9.jpg"
     },
     {
         id: 3,
@@ -25,8 +25,74 @@ const initialProducts = [
         price: 60000,
         discount: 0,
         category: "Camisetas",
-        image: "https://images.pexels.com/photos/32368148/pexels-photo-32368148.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    }
+        image: "/images/products/AtleticoMadrid.jpg"
+    },
+    {
+        id: 4,
+        name: "Inter Miami 25 - 26 + Parche + Messi N°10",
+        price: 55000,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/InterMiami.jpg"
+    },
+    {
+        id: 5,
+        name: "Roma Alternativa 25-26",
+        price: 50000,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/RomaAlternativa.jpeg"
+    },
+    {
+        id: 6,
+        name: "Adidas Oasis Black",
+        price: 53500,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/oasisBlack.jpeg"
+    }, {
+        id: 7,
+        name: "Barcelona Local 25 - 26 + Parche",
+        price: 53500,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/Barcelona.jpg"
+    }, {
+        id: 8,
+        name: "Liverpool 25 - 26 Alexis Mac Allister N°10",
+        price: 60000,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/liverpoolBlanca.jpg"
+    }, {
+        id: 9,
+        name: "Liverpool 25 - 26 Short Jugador",
+        price: 50000,
+        discount: 0,
+        category: "Shorts",
+        image: "/images/products/shortLiverpool.jpeg"
+    }, {
+        id: 10,
+        name: "Argentina 25 - 26 Short Jugador",
+        price: 50000,
+        discount: 0,
+        category: "Shorts",
+        image: "/images/products/shortArg.jpeg"
+    }, {
+        id: 11,
+        name: "Short Sorpresa",
+        price: 55000,
+        discount: 0,
+        category: "Shorts",
+        image: "/images/products/images.jpeg"
+    }, {
+        id: 12,
+        name: "Camiseta Sorpresa",
+        price: 60000,
+        discount: 0,
+        category: "Camisetas",
+        image: "/images/products/regalo-sorpresa.jpg"
+    },
 ];
 
 export const ProductProvider = ({ children }) => {
