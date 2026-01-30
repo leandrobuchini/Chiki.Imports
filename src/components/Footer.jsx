@@ -36,7 +36,7 @@ const Footer = () => {
                     <div>
                         <h4 className="font-bold mb-6 uppercase text-xs tracking-widest text-slate-400">Síguenos</h4>
                         <div className="flex space-x-4">
-                            <a href="#" className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full hover:bg-primary-500 hover:text-white transition-all">
+                            <a href="https://www.instagram.com/chiki.imports/" target="_blank" rel="noopener noreferrer" className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full hover:bg-primary-500 hover:text-white transition-all">
                                 <Instagram size={20} />
                             </a>
                             <a href="#" className="p-2 bg-slate-100 dark:bg-slate-900 rounded-full hover:bg-primary-500 hover:text-white transition-all">

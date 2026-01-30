@@ -3,17 +3,17 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
     {
-        image: 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&q=80&w=1920',
-        title: 'Nueva Colección 2024',
+        image: 'https://images.pexels.com/photos/17160679/pexels-photo-17160679.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+        title: 'Nueva Colección 2026',
         subtitle: 'Lleva tu pasión a otro nivel con lo último en indumentaria.',
     },
     {
-        image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&q=80&w=1920',
+        image: 'https://images.pexels.com/photos/6077792/pexels-photo-6077792.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         title: 'Equipamiento de Elite',
         subtitle: 'Calidad Premium en cada prenda para un rendimiento máximo.',
     },
     {
-        image: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?auto=format&fit=crop&q=80&w=1920',
+        image: 'https://images.pexels.com/photos/32368148/pexels-photo-32368148.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         title: 'Clásicos Atemporales',
         subtitle: 'Revive la historia con nuestras camisetas retro exclusivas.',
     },

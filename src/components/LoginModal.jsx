@@ -69,7 +69,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                     </button>
                 </form>
                 <p className="mt-6 text-center text-xs text-slate-400">
-                    Contraseña por defecto: <strong>admin123</strong>
+                    Acceso para personal autorizado
                 </p>
             </div>
         </div>

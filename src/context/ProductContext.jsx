@@ -35,6 +35,14 @@ const initialProducts = [
         image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800',
         category: 'Training',
     },
+    {
+        id: 4,
+        name: 'Short de Entrenamiento Black',
+        price: 35000,
+        discount: 0,
+        image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800',
+        category: 'Training',
+    },
 ];
 
 export const ProductProvider = ({ children }) => {

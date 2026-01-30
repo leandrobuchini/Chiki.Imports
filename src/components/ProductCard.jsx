@@ -33,12 +33,16 @@ const ProductCard = ({ product }) => {
                             <Tag size={10} />
                             {product.discount}% OFF
                         </span>
+
                     )}
                     {product.category && (
                         <span className="px-3 py-1 bg-white/90 dark:bg-slate-950/90 backdrop-blur-sm text-[10px] font-bold uppercase tracking-wider rounded-full w-fit">
                             {product.category}
                         </span>
                     )}
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase tracking-wider rounded-full w-fit flex items-center gap-1 border border-green-200 dark:border-green-800/50">
+                        Envío gratis en Santa Fe
+                    </span>
                 </div>
             </div>
 
