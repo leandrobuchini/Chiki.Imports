@@ -8,7 +8,8 @@ const CartDrawer = ({ isOpen, onClose }) => {
     const handleCheckout = () => {
         const phoneNumber = '543425298828'; // Reemplazar con el número real
         const messageLines = cartItems.map(
-            (item) => `- ${item.quantity}x ${item.name} ($${(item.price * item.quantity).toLocaleString()})`
+            (item) =>
+                `- ${item.quantity}x ${item.name}${item.size ? ` (Talle: ${item.size})` : ''} ($${(item.price * item.quantity).toLocaleString()})`
         );
 
         const fullMessage = `Hola Chiki Imports! Me gustaría realizar el siguiente pedido:\n\n${messageLines.join('\n')}\n\n*Total: $${cartTotal.toLocaleString()}*\n\n¿Cómo podemos coordinar el pago y envío?`;
@@ -55,7 +56,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                         </div>
                     ) : (
                         cartItems.map((item) => (
-                            <div key={item.id} className="flex space-x-4">
+                            <div key={`${item.id}-${item.size ?? 'unico'}`} className="flex space-x-4">
                                 <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden shrink-0">
                                     <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                                 </div>
@@ -63,26 +64,29 @@ const CartDrawer = ({ isOpen, onClose }) => {
                                     <div className="flex justify-between items-start">
                                         <h3 className="font-bold text-sm leading-tight">{item.name}</h3>
                                         <button
-                                            onClick={() => removeFromCart(item.id)}
+                                            onClick={() => removeFromCart(item.id, item.size)}
                                             className="text-slate-400 hover:text-red-500 transition-colors"
                                         >
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
+                                    {item.size && (
+                                        <p className="text-xs font-bold text-slate-500">Talle: {item.size}</p>
+                                    )}
                                     <p className="text-primary-600 dark:text-primary-400 font-bold">
                                         ${item.price.toLocaleString()}
                                     </p>
                                     <div className="flex items-center space-x-3 pt-2">
                                         <div className="flex items-center border border-slate-200 dark:border-slate-800 rounded-lg scale-90">
                                             <button
-                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
                                                 className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700"
                                             >
                                                 <Minus size={14} />
                                             </button>
                                             <span className="w-8 text-center text-xs font-bold">{item.quantity}</span>
                                             <button
-                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
                                                 className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700"
                                             >
                                                 <Plus size={14} />

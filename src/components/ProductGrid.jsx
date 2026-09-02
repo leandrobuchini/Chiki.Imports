@@ -3,7 +3,7 @@ import ProductCard from './ProductCard';
 import { useProducts } from '../context/ProductContext';
 
 const ProductGrid = () => {
-    const { products } = useProducts();
+    const { products, loading } = useProducts();
     const [filter, setFilter] = useState('Todos');
 
     const filteredProducts = filter === 'Todos'
@@ -36,10 +36,21 @@ const ProductGrid = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredProducts.map((product) => (
+                {loading && (
+                    Array.from({ length: 8 }).map((_, i) => (
+                        <div key={i} className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 animate-pulse">
+                            <div className="aspect-square bg-slate-200 dark:bg-slate-800" />
+                            <div className="p-6 space-y-3">
+                                <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-3/4 mx-auto" />
+                                <div className="h-6 bg-slate-200 dark:bg-slate-800 rounded w-1/2 mx-auto" />
+                            </div>
+                        </div>
+                    ))
+                )}
+                {!loading && filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
-                {filteredProducts.length === 0 && (
+                {!loading && filteredProducts.length === 0 && (
                     <div className="col-span-full py-20 text-center text-slate-500">
                         No hay productos en esta categoría.
                     </div>

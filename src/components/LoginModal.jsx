@@ -3,21 +3,28 @@ import { X, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const LoginModal = ({ isOpen, onClose }) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState('');
+    const [submitting, setSubmitting] = useState(false);
     const { login } = useAuth();
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (login(password)) {
+        setSubmitting(true);
+        setError('');
+        const result = await login(email, password);
+        setSubmitting(false);
+
+        if (result.success) {
             onClose();
+            setEmail('');
             setPassword('');
-            setError(false);
         } else {
-            setError(true);
+            setError('Email o contraseña incorrectos');
         }
     };
 
@@ -37,7 +44,18 @@ const LoginModal = ({ isOpen, onClose }) => {
                     <p className="text-slate-500 text-sm mt-1">Acceso exclusivo para Chiki Imports</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError('');
+                        }}
+                        className={`w-full py-3 px-4 bg-slate-100 dark:bg-slate-800 rounded-xl border ${error ? 'border-red-500' : 'border-transparent focus:border-primary-500'
+                            } outline-none transition-all`}
+                    />
                     <div className="relative">
                         <input
                             type={showPassword ? 'text' : 'password'}
@@ -45,7 +63,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                             value={password}
                             onChange={(e) => {
                                 setPassword(e.target.value);
-                                setError(false);
+                                setError('');
                             }}
                             className={`w-full py-3 px-4 pr-12 bg-slate-100 dark:bg-slate-800 rounded-xl border ${error ? 'border-red-500' : 'border-transparent focus:border-primary-500'
                                 } outline-none transition-all`}
@@ -59,13 +77,14 @@ const LoginModal = ({ isOpen, onClose }) => {
                         </button>
                     </div>
 
-                    {error && <p className="text-red-500 text-xs text-center font-bold">Contraseña incorrecta</p>}
+                    {error && <p className="text-red-500 text-xs text-center font-bold">{error}</p>}
 
                     <button
                         type="submit"
-                        className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all active:scale-95"
+                        disabled={submitting}
+                        className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all active:scale-95 disabled:opacity-60"
                     >
-                        INGRESAR
+                        {submitting ? 'INGRESANDO...' : 'INGRESAR'}
                     </button>
                 </form>
                 <p className="mt-6 text-center text-xs text-slate-400">

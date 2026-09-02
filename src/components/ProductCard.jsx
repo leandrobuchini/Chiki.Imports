@@ -4,16 +4,23 @@ import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
     const [quantity, setQuantity] = useState(1);
+    const [selectedSize, setSelectedSize] = useState(null);
+    const [sizeError, setSizeError] = useState(false);
     const { addToCart } = useCart();
 
+    const hasSizes = product.sizes?.length > 0;
     const hasDiscount = product.discount > 0;
     const finalPrice = hasDiscount
         ? product.price * (1 - product.discount / 100)
         : product.price;
 
     const handleAdd = () => {
+        if (hasSizes && !selectedSize) {
+            setSizeError(true);
+            return;
+        }
         // Agregamos el producto con el precio final ya calculado
-        addToCart({ ...product, price: finalPrice }, quantity);
+        addToCart({ ...product, price: finalPrice, size: selectedSize }, quantity);
         setQuantity(1);
     };
 
@@ -69,6 +76,32 @@ const ProductCard = ({ product }) => {
                 </div>
 
                 <div className="flex flex-col space-y-3">
+                    {hasSizes && (
+                        <div>
+                            <div className="flex items-center justify-center gap-2 flex-wrap">
+                                {product.sizes.map((size) => (
+                                    <button
+                                        key={size}
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedSize(size);
+                                            setSizeError(false);
+                                        }}
+                                        className={`w-9 h-9 rounded-lg text-xs font-bold transition-all border-2 ${selectedSize === size
+                                                ? 'bg-slate-900 dark:bg-primary-600 border-slate-900 dark:border-primary-600 text-white'
+                                                : 'bg-slate-100 dark:bg-slate-800 border-transparent text-slate-500 hover:border-primary-300'
+                                            }`}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
+                            </div>
+                            {sizeError && (
+                                <p className="text-red-500 text-xs font-bold mt-2">Elegí un talle para continuar</p>
+                            )}
+                        </div>
+                    )}
+
                     <div className="flex items-center justify-center space-x-4 bg-slate-100 dark:bg-slate-800 rounded-full p-1 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-colors">
                         <button
                             onClick={() => setQuantity(Math.max(1, quantity - 1))}

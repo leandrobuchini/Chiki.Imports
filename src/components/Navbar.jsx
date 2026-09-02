@@ -15,8 +15,9 @@ const Navbar = ({ onOpenCart, onOpenLogin, onOpenAdmin }) => {
                 <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
                         <span className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent cursor-pointer">
-                            Chiki Imports
+                            Chiki Imports 
                         </span>
+                        
                     </div>
 
                     <div className="hidden md:flex items-center space-x-8">

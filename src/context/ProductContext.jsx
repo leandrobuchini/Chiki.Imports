@@ -1,121 +1,95 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { supabase, PRODUCT_IMAGES_BUCKET } from '../lib/supabaseClient';
 
 const ProductContext = createContext();
 
-const initialProducts = [
-    {
-        id: 1,
-        name: "Argentina Local 2026 + Parche + Messi 10",
-        price: 60000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/ec62b6d4.jpg"
-    },
-    {
-        id: 2,
-        name: "Argentina Edicion Aniversario",
-        price: 50000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/ebef86d9.jpg"
-    },
-    {
-        id: 3,
-        name: "Atletico Madrid 25-26 + Parche + Julian Alvarez N°19",
-        price: 60000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/AtleticoMadrid.jpg"
-    },
-    {
-        id: 4,
-        name: "Inter Miami 25 - 26 + Parche + Messi N°10",
-        price: 55000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/InterMiami.jpg"
-    },
-    {
-        id: 5,
-        name: "Roma Alternativa 25-26",
-        price: 50000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/RomaAlternativa.jpeg"
-    },
-    {
-        id: 6,
-        name: "Adidas Oasis Black",
-        price: 53500,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/oasisBlack.jpeg"
-    }, {
-        id: 7,
-        name: "Barcelona Local 25 - 26 + Parche",
-        price: 53500,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/Barcelona.jpg"
-    }, {
-        id: 8,
-        name: "Liverpool 25 - 26 Alexis Mac Allister N°10",
-        price: 60000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/liverpoolBlanca.jpg"
-    }, {
-        id: 9,
-        name: "Liverpool 25 - 26 Short Jugador",
-        price: 50000,
-        discount: 0,
-        category: "Shorts",
-        image: "/images/products/shortLiverpool.jpeg"
-    }, {
-        id: 10,
-        name: "Argentina 25 - 26 Short Jugador",
-        price: 50000,
-        discount: 0,
-        category: "Shorts",
-        image: "/images/products/shortArg.jpeg"
-    }, {
-        id: 11,
-        name: "Short Sorpresa",
-        price: 55000,
-        discount: 0,
-        category: "Shorts",
-        image: "/images/products/images.jpeg"
-    }, {
-        id: 12,
-        name: "Camiseta Sorpresa",
-        price: 60000,
-        discount: 0,
-        category: "Camisetas",
-        image: "/images/products/regalo-sorpresa.jpg"
-    },
-];
-
 export const ProductProvider = ({ children }) => {
-    const [products, setProducts] = useState(() => {
-        const savedProducts = localStorage.getItem('products');
-        return savedProducts ? JSON.parse(savedProducts) : initialProducts;
-    });
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchProducts = useCallback(async () => {
+        setLoading(true);
+        const { data, error: fetchError } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (fetchError) {
+            console.error('Error al cargar productos:', fetchError.message);
+            setError(fetchError.message);
+        } else {
+            // Postgres serializa "numeric" como string en JSON; los pasamos a Number
+            // para que toLocaleString() y las cuentas de descuento funcionen bien.
+            const normalized = data.map((p) => ({
+                ...p,
+                price: Number(p.price),
+                discount: Number(p.discount),
+            }));
+            setProducts(normalized);
+            setError(null);
+        }
+        setLoading(false);
+    }, []);
 
     useEffect(() => {
-        localStorage.setItem('products', JSON.stringify(products));
-    }, [products]);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- carga inicial de datos, patrón válido
+        fetchProducts();
 
-    const addProduct = (product) => {
-        const newProduct = { ...product, id: Date.now() };
-        setProducts((prev) => [newProduct, ...prev]);
+        // Mantiene el catálogo sincronizado en tiempo real entre pestañas/dispositivos
+        const channel = supabase
+            .channel('products-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+                fetchProducts();
+            })
+            .subscribe();
+
+        return () => supabase.removeChannel(channel);
+    }, [fetchProducts]);
+
+    // Sube la imagen al bucket de Storage y devuelve su URL pública
+    const uploadProductImage = async (imageFile) => {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+            .from(PRODUCT_IMAGES_BUCKET)
+            .upload(fileName, imageFile);
+
+        if (uploadError) {
+            throw new Error(`No se pudo subir la imagen: ${uploadError.message}`);
+        }
+
+        const { data } = supabase.storage.from(PRODUCT_IMAGES_BUCKET).getPublicUrl(fileName);
+        return data.publicUrl;
     };
 
-    const deleteProduct = (id) => {
+    // product: { name, price, discount, category }, imageFile: File del <input type="file">
+    const addProduct = async (product, imageFile) => {
+        const imageUrl = await uploadProductImage(imageFile);
+
+        const { error: insertError } = await supabase
+            .from('products')
+            .insert([{ ...product, image: imageUrl }]);
+
+        if (insertError) {
+            throw new Error(`No se pudo guardar el producto: ${insertError.message}`);
+        }
+        // La suscripción en tiempo real actualiza "products" automáticamente,
+        // pero refrescamos igual por si el evento tarda en llegar.
+        await fetchProducts();
+    };
+
+    const deleteProduct = async (id) => {
+        const { error: deleteError } = await supabase.from('products').delete().eq('id', id);
+        if (deleteError) {
+            throw new Error(`No se pudo eliminar el producto: ${deleteError.message}`);
+        }
         setProducts((prev) => prev.filter((p) => p.id !== id));
     };
 
     return (
-        <ProductContext.Provider value={{ products, addProduct, deleteProduct }}>
+        <ProductContext.Provider value={{ products, loading, error, addProduct, deleteProduct, refetch: fetchProducts }}>
             {children}
         </ProductContext.Provider>
     );
